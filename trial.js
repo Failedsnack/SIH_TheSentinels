@@ -8,18 +8,16 @@ import fs from "fs";
 import multer from "multer";
 import cron from "node-cron";
 import axios from "axios";
-import pool from "./database.js";  // database.js must also use `export default`
+import pool from "./database.js";  
 
 dotenv.config();
 
 const app = express();
 
-// __dirname replacement for ESM
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// make uploads folder if not exist
 if (!fs.existsSync(path.join(__dirname, "uploads"))) {
   fs.mkdirSync(path.join(__dirname, "uploads"), { recursive: true });
 }
@@ -29,7 +27,6 @@ app.use(express.json());
 
 const JWT_SECRET = "your_secret_key";
 
-// … rest of your routes/code stays the same
 
 // ================== Auth ==================
 app.post("/signup", async (req, res) => {
@@ -97,7 +94,6 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ message: "Invalid token" });
 
-    // user = { id, username, role } because we signed it like that
     req.user = user;
     next();
   });
@@ -271,7 +267,6 @@ app.post("/prescriptions", authenticateToken, authorizeRoles("doctor"), async (r
   }
 });
 
-// Patient: my prescriptions
 app.get("/prescriptions/me", authenticateToken, authorizeRoles("patient"), async (req, res) => {
   try {
     const [rows] = await pool.query(`
@@ -308,7 +303,6 @@ app.post(
 );
 
 // ================== Consultation Logs ==================
-// Start session
 app.post("/consultation/start", authenticateToken, authorizeRoles("doctor", "patient"), async (req, res) => {
   const doctorId = req.user.role === "doctor" ? req.user.id : null;
   const patientId = req.user.role === "patient" ? req.user.id : null;
@@ -324,7 +318,6 @@ app.post("/consultation/start", authenticateToken, authorizeRoles("doctor", "pat
   }
 });
 
-// End session
 app.post("/consultation/end/:id", authenticateToken, authorizeRoles("doctor", "patient"), async (req, res) => {
   try {
     const [r] = await pool.query("UPDATE consultations SET status='ended', end_time=NOW() WHERE id = ?", [req.params.id]);
@@ -339,7 +332,6 @@ app.post("/consultation/end/:id", authenticateToken, authorizeRoles("doctor", "p
 
 
 // ================== Reminders ==================
-// Cron: every minute, print due reminders and mark sent
 cron.schedule("* * * * *", async () => {
   try {
     const [due] = await pool.query(
@@ -375,7 +367,7 @@ app.post("/symptoms", authenticateToken, (req, res) => {
   res.json({ symptoms, possibleConditions: ["Fever", "Common Cold"] });
 });
 
-// Pharmacy API (dummy external call)
+// Pharmacy API 
 app.get("/pharmacy/medicines", authenticateToken, async (req, res) => {
   try {
     // simulate external API
