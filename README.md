@@ -84,3 +84,43 @@ Setup DB connection (Postgres/MySQL) if your teammate finishes schema
 Database Integration (if teammate is ready)
 
 Replace dummy in-memory arrays with DB queries
+
+#FRONTEND 
+✅ Already Done
+Project setup
+Created frontend-sih with Next.js.
+Installed deps: axios, jwt-decode, react-hook-form.
+Installed Tailwind (init done).
+Core setup
+src/lib/api.js → Axios instance (with token interceptor).
+src/context/AuthContext.jsx → Auth provider (login/logout, user state).
+Auth
+LoginForm.jsx → working login UI.
+Doctors
+DoctorCard.jsx → card UI for one doctor.
+DoctorsList.jsx → fetch & display doctors, open booking form.
+⏳ Pending (Next Steps)
+Booking system
+Create BookAppointment.jsx component (form for date & time).
+Integrate with /appointments backend.
+Navbar
+Navbar.jsx → show “Login” button if logged out, or user info + “Logout” if logged in.
+Include in global layout.jsx.
+Pages setup
+app/layout.jsx → wrap with AuthProvider + Navbar.
+app/page.jsx → simple homepage with links.
+app/login/page.jsx → renders LoginForm.
+app/doctors/page.jsx → renders DoctorsList.
+Styling
+globals.css → add Tailwind base, components, utilities.
+Adjust spacing/colors for UI polish.
+Environment
+.env.local → set NEXT_PUBLIC_API_BASE_URL=http://localhost:5000.
+Register page (optional, but recommended)
+Similar to LoginForm, call /auth/register.
+Protected route / Dashboard
+app/dashboard/page.jsx → show user’s appointments (requires backend).
+Video consultation (later milestone)
+Either Jitsi embed or integration with Agora/Twilio.
+Code cleanup
+Add ESLint/Prettier, remove duplicate package-lock.json (to fix Next.js warning).
