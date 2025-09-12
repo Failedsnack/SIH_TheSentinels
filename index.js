@@ -1,11 +1,19 @@
-// index.js
-// Telemedicine backend prototype - Phone-first login + full menu features
-// Install: npm install express cors jsonwebtoken
-// Run: node index.js
+import dotenv from "dotenv";
+dotenv.config();
 
-const express = require("express");
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
+import express from "express";
+import cors from "cors";
+import jwt from "jsonwebtoken";
+import { fileURLToPath } from "url";
+import path from "path";
+import fs from "fs";
+import multer from "multer";
+import cron from "node-cron";
+import axios from "axios";
+import pool from "./database.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
@@ -13,66 +21,29 @@ app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_key";
 const PORT = process.env.PORT || 3000;
+const UPLOADS_DIR = path.join(__dirname, "uploads");
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
-// ---------------- In-memory storage (prototype) ----------------
-// In production these are DB tables; OTP store should be in Redis.
-const users = [];        // { phone, role }  // role = 'patient' | 'doctor' | 'admin'
-const patients = [];     // { phone, name, dob, gender }
-const doctors = [];      // { phone, name, department, experience, licenseNumber, timeSlot }
-const prescriptions = []; // { id, patientPhone, doctorPhone, medicine, notes, date }
-const appointments = [];  // { id, patientPhone, doctorPhone, date }
-const followups = [];     // { id, patientPhone, doctorPhone, message, date }
-const contacts = [];      // { id, name, phone, subject, message, date }
+// ----------------- DB helpers -----------------
 
-// OTP store (in-memory) for prototype:
-// Map phone -> { otp, expiresAt (seconds), attempts, lastSentAt (seconds), sendsToday, sendDay }
-const otpStore = new Map();
-
-// Simple helper to track sends per day in-memory (resets across restarts)
-function getTodayYMD() {
-  const d = new Date();
-  return `${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}`;
+async function q(sql, params = []) {
+  const [rows] = await pool.query(sql, params);
+  return rows;
+}
+async function exec(sql, params = []) {
+  const [result] = await pool.query(sql, params);
+  return result;
 }
 
-// ---------------- Configuration & limits ----------------
-const OTP_LENGTH = 6;
-const OTP_TTL_SEC = 5 * 60;        // 5 minutes
-const MIN_SECONDS_BETWEEN_SENDS = 30; // prevent immediate re-send
-const MAX_SENDS_PER_DAY = 10;      // per phone number
-const MAX_VERIFY_ATTEMPTS = 5;
-
-// ---------------- Helpers ----------------
-function nowSeconds() {
-  return Math.floor(Date.now() / 1000);
-}
-function generateOTP(len = OTP_LENGTH) {
-  let s = "";
-  for (let i = 0; i < len; i++) s += Math.floor(Math.random() * 10);
-  return s;
-}
-function isRegistered(phone) {
-  return users.some(u => u.phone === phone);
-}
-function findUser(phone) {
-  return users.find(u => u.phone === phone);
-}
-function ensureUser(phone, role) {
-  const existing = findUser(phone);
-  if (!existing) {
-    users.push({ phone, role });
-    return true;
-  }
-  return false;
-}
-
-// ---------------- Auth middleware ----------------
+// ----------------- Auth helpers / middleware -----------------
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) return res.status(401).json({ message: "No token provided" });
+
   jwt.verify(token, JWT_SECRET, (err, payload) => {
     if (err) return res.status(403).json({ message: "Invalid or expired token" });
-    req.user = payload; // { phone, role, iat, exp }
+    req.user = payload; // { id, username, role, iat, exp }
     next();
   });
 }
@@ -85,253 +56,460 @@ function authorizeRoles(...allowed) {
   };
 }
 
-// ---------------- Phone-first OTP endpoints ----------------
+// ================== OTP Auth ==================
+import crypto from "crypto";
+const otpStore = new Map();
+const OTP_TTL_SEC = 300; // 5 minutes
 
-/*
-POST /auth/send-otp
-Body: { phone: "+91..." }
-Behavior:
- - If phone NOT registered -> { registered: false } (FE should show register)
- - If phone registered   -> generate OTP, store, log (or send) and return { registered: true }
-*/
-app.post("/auth/send-otp", (req, res) => {
-  const phoneRaw = req.body.phone;
-  const phone = phoneRaw ? String(phoneRaw).trim() : "";
-  if (!phone) return res.status(400).json({ message: "phone is required" });
+function generateOTP() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
 
-  if (!isRegistered(phone)) {
+// 1. Request OTP
+app.post("/auth/send-otp", async (req, res) => {
+  const { phone } = req.body;
+  if (!phone) return res.status(500).json({ message: "Phone is required" });
+
+  // check if user exists
+  const [users] = await pool.query("SELECT * FROM users WHERE username = ?", [phone]);
+
+  if (users.length === 0) {
     return res.json({ registered: false, message: "Phone not registered. Please register." });
   }
 
-  // rate limits per-phone (in-memory)
-  const now = nowSeconds();
-  const store = otpStore.get(phone) || {};
-  const today = getTodayYMD();
-  if (store.sendDay !== today) {
-    store.sendsToday = 0;
-    store.sendDay = today;
-  }
-  if ((store.sendsToday || 0) >= MAX_SENDS_PER_DAY) {
-    return res.status(429).json({ message: "Exceeded daily OTP sends for this phone" });
-  }
-  if (store.lastSentAt && now - store.lastSentAt < MIN_SECONDS_BETWEEN_SENDS) {
-    return res.status(429).json({ message: `Please wait ${MIN_SECONDS_BETWEEN_SENDS} seconds before requesting another OTP` });
-  }
+  const otp = generateOTP();
+  otpStore.set(phone, { otp, expiresAt: Date.now() + OTP_TTL_SEC * 1000 });
 
-  // generate + store OTP
-  const otp = generateOTP(OTP_LENGTH);
-  const entry = {
-    otp,
-    expiresAt: now + OTP_TTL_SEC,
-    attempts: 0,
-    lastSentAt: now,
-    sendsToday: (store.sendsToday || 0) + 1,
-    sendDay: today
-  };
-  otpStore.set(phone, entry);
+  console.log(`DEBUG OTP for ${phone}: ${otp}`); // in real app: send SMS
 
-  // For prototype: log OTP to console. Production: send via Twilio/MSG91.
-  console.log(`DEBUG OTP for ${phone}: ${otp} (valid ${OTP_TTL_SEC}s)`);
-
-  return res.json({ registered: true, message: "OTP sent (check server logs for demo)" });
+  res.json({ registered: true, message: "OTP sent" });
 });
 
-/*
-POST /auth/verify-otp
-Body: { phone: "+91...", otp: "123456" }
-Behavior:
- - validate OTP stored and issue JWT if ok
- - only allowed for registered phones
-*/
-app.post("/auth/verify-otp", (req, res) => {
-  const phoneRaw = req.body.phone;
-  const otpRaw = req.body.otp;
-  const phone = phoneRaw ? String(phoneRaw).trim() : "";
-  const otp = otpRaw ? String(otpRaw).trim() : "";
-  if (!phone || !otp) return res.status(400).json({ message: "phone and otp required" });
-
-  if (!isRegistered(phone)) return res.status(400).json({ message: "Phone not registered. Register first." });
+// 2. Verify OTP
+app.post("/auth/verify-otp", async (req, res) => {
+  const { phone, otp } = req.body;
+  if (!phone || !otp) return res.status(500).json({ message: "Phone and OTP required" });
 
   const entry = otpStore.get(phone);
-  if (!entry) return res.status(400).json({ message: "No OTP requested or OTP expired" });
-
-  const now = nowSeconds();
-  if (now > entry.expiresAt) {
-    otpStore.delete(phone);
-    return res.status(400).json({ message: "OTP expired" });
+  if (!entry || Date.now() > entry.expiresAt) {
+    return res.status(400).json({ message: "OTP expired or not found" });
   }
-  if ((entry.attempts || 0) >= MAX_VERIFY_ATTEMPTS) {
-    return res.status(429).json({ message: "Too many verification attempts" });
-  }
-
   if (entry.otp !== otp) {
-    entry.attempts = (entry.attempts || 0) + 1;
-    otpStore.set(phone, entry);
     return res.status(400).json({ message: "Invalid OTP" });
   }
 
-  // success
   otpStore.delete(phone);
-  const user = findUser(phone);
-  const token = jwt.sign({ phone: user.phone, role: user.role }, JWT_SECRET, { expiresIn: "12h" });
-  return res.json({ token, role: user.role, message: "OTP verified" });
+
+  // fetch user
+  const [[user]] = await pool.query("SELECT * FROM users WHERE username = ?", [phone]);
+  if (!user) return res.status(400).json({ message: "User not found. Please register first." });
+
+  // create JWT
+  const token = jwt.sign(
+    { id: user.id, username: user.username, role: user.role },
+    JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  res.json({ message: "Login successful", token, role: user.role });
 });
 
-// ---------------- Registration ----------------
-/*
-POST /register
-Body (patient):
- { role: "patient", phone, name, dob, gender }
-Body (doctor):
- { role: "doctor", phone, name, department, experience, licenseNumber, timeSlot }
-Only allowed if phone not already registered.
-*/
-app.post("/register", (req, res) => {
-  const role = req.body.role;
-  const phoneRaw = req.body.phone;
-  const phone = phoneRaw ? String(phoneRaw).trim() : "";
-  if (!phone || !role) return res.status(400).json({ message: "phone and role are required" });
-  if (role !== "patient" && role !== "doctor") return res.status(400).json({ message: "role must be 'patient' or 'doctor'" });
+// 3. Register (if phone not registered)
+app.post("/register", async (req, res) => {
+  const { role, phone, name, age, specialization } = req.body;
 
-  if (isRegistered(phone)) {
-    return res.status(400).json({ message: "Phone already registered. Please login." });
-  }
+  if (!phone || !role) return res.status(400).json({ message: "phone and role required" });
+  if (!["patient", "doctor"].includes(role))
+    return res.status(400).json({ message: "role must be patient or doctor" });
+
+  const [exists] = await pool.query("SELECT id FROM users WHERE username=?", [phone]);
+  if (exists.length > 0) return res.status(400).json({ message: "Phone already registered" });
+
+  const [r] = await pool.query("INSERT INTO users (username, role) VALUES (?, ?)", [phone, role]);
+  const userId = r.insertId;
 
   if (role === "patient") {
-    const { name, dob, gender } = req.body;
-    if (!name || !dob || !gender) return res.status(400).json({ message: "patient requires name, dob, gender" });
-    patients.push({ phone, name, dob, gender });
-    users.push({ phone, role });
-    return res.status(201).json({ message: "Patient registered. Proceed to login." });
+    await pool.query(
+      "INSERT INTO patients (user_id, name, age) VALUES (?, ?, ?)",
+      [userId, name || phone, age || null]
+    );
+  } else if (role === "doctor") {
+    await pool.query(
+      "INSERT INTO doctors (user_id, name, specialization) VALUES (?, ?, ?)",
+      [userId, name || phone, specialization || "General"]
+    );
   }
 
-  if (role === "doctor") {
-    const { name, department, experience, licenseNumber, timeSlot } = req.body;
-    if (!name || !department || !experience || !licenseNumber || !timeSlot) {
-      return res.status(400).json({ message: "doctor requires name, department, experience, licenseNumber, timeSlot" });
+  res.status(201).json({ message: "Registered successfully. Please request OTP to login." });
+});
+
+// ----------------- Profiles -----------------
+app.get("/profile", authenticateToken, async (req, res) => {
+  try {
+    const rows = await q("SELECT id, username, role FROM users WHERE id = ?", [req.user.id]);
+    return res.json(rows[0] || null);
+  } catch (err) {
+    console.error("PROFILE ERR:", err);
+    return res.status(500).json({ message: "Profile fetch error" });
+  }
+});
+
+// ----------------- Doctors & Patients endpoints -----------------
+app.get("/doctors", async (req, res) => {
+  try {
+    const dept = req.query.department;
+    let sql = "SELECT d.id, d.user_id, d.name, d.specialization, u.username AS phone FROM doctors d JOIN users u ON u.id = d.user_id";
+    const params = [];
+    if (dept) {
+      sql += " WHERE d.specialization = ?";
+      params.push(dept);
     }
-    doctors.push({ phone, name, department, experience, licenseNumber, timeSlot });
-    users.push({ phone, role });
-    return res.status(201).json({ message: "Doctor registered. Proceed to login." });
+    sql += " ORDER BY d.id DESC";
+    const rows = await q(sql, params);
+    return res.json(rows);
+  } catch (err) {
+    console.error("GET DOCTORS ERR:", err);
+    return res.status(500).json({ message: "Error fetching doctors" });
   }
-
-  return res.status(400).json({ message: "Unknown error" });
 });
 
-// ---------------- Public & Menu endpoints ----------------
-app.get("/", (req, res) => res.send("Telemedicine backend running"));
-
-// Emergency (public)
-app.get("/emergency", (req, res) => {
-  res.json({ ambulanceNumber: "108" });
-});
-
-// Find a Doctor (public)
-app.get("/doctors", (req, res) => {
-  const qDept = (req.query.department || "").trim();
-  let resList = doctors.slice();
-  if (qDept) {
-    resList = resList.filter(d => (d.department || "").toLowerCase() === qDept.toLowerCase());
+app.get("/doctors/me", authenticateToken, authorizeRoles("doctor"), async (req, res) => {
+  try {
+    const rows = await q(
+      `SELECT d.id, d.user_id, d.name, d.specialization, u.username AS phone
+       FROM doctors d JOIN users u ON u.id = d.user_id WHERE d.user_id = ?`,
+      [req.user.id]
+    );
+    return res.json(rows[0] || null);
+  } catch (err) {
+    console.error("DOCTOR ME ERR:", err);
+    return res.status(500).json({ message: "Failed to fetch doctor profile" });
   }
-  res.json(resList);
 });
 
-// ---------------- Protected: Dashboard ----------------
-app.get("/dashboard", authenticateToken, (req, res) => {
-  const phone = req.user.phone;
-  if (req.user.role === "patient") {
-    const myPrescriptions = prescriptions.filter(p => p.patientPhone === phone);
-    const myFollowups = followups.filter(f => f.patientPhone === phone);
-    return res.json({ prescriptions: myPrescriptions, followups: myFollowups });
+app.get("/patients/me", authenticateToken, authorizeRoles("patient"), async (req, res) => {
+  try {
+    const rows = await q("SELECT id, user_id, name, age, phone FROM patients WHERE user_id = ?", [req.user.id]);
+    return res.json(rows[0] || null);
+  } catch (err) {
+    console.error("PATIENT ME ERR:", err);
+    return res.status(500).json({ message: "Failed to fetch patient profile" });
   }
-  if (req.user.role === "doctor") {
-    const myAppointments = appointments.filter(a => a.doctorPhone === phone);
-    const patientsHistory = prescriptions
-      .filter(p => p.doctorPhone === phone)
-      .map(p => ({ patientPhone: p.patientPhone, medicine: p.medicine, date: p.date }));
-    return res.json({ appointments: myAppointments, patientsHistory });
+});
+
+// ----------------- Appointments -----------------
+// Patient creates appointment
+app.post("/appointments", authenticateToken, authorizeRoles("patient"), async (req, res) => {
+  try {
+    const { doctorId, doctorUsername, scheduled_at } = req.body;
+    if (!scheduled_at || (!doctorId && !doctorUsername)) {
+      return res.status(400).json({ message: "scheduled_at and doctorId or doctorUsername required" });
+    }
+
+    // resolve doctor id if username provided
+    let docId = doctorId;
+    if (!docId && doctorUsername) {
+      const rows = await q("SELECT id FROM users WHERE username = ? AND role = 'doctor'", [doctorUsername]);
+      if (rows.length === 0) return res.status(404).json({ message: "Doctor not found" });
+      docId = rows[0].id;
+    }
+
+    // verify doctor exists
+    const drCheck = await q("SELECT id FROM users WHERE id = ? AND role = 'doctor'", [docId]);
+    if (drCheck.length === 0) return res.status(404).json({ message: "Doctor not found" });
+
+    // conflict check
+    const conflict = await q("SELECT id FROM appointments WHERE doctor_user_id = ? AND scheduled_at = ?", [docId, scheduled_at]);
+    if (conflict.length > 0) return res.status(409).json({ message: "Doctor already booked at that time" });
+
+    const result = await exec("INSERT INTO appointments (patient_user_id, doctor_user_id, scheduled_at) VALUES (?, ?, ?)", [req.user.id, docId, scheduled_at]);
+
+    // add reminder 1 hour before
+    await exec("INSERT INTO reminders (user_id, message, due_at) VALUES (?, ?, DATE_SUB(?, INTERVAL 1 HOUR))", [
+      req.user.id,
+      `Reminder: Appointment at ${scheduled_at}`,
+      scheduled_at,
+    ]);
+
+    return res.status(201).json({ message: "Appointment booked", id: result.insertId });
+  } catch (err) {
+    console.error("CREATE APPT ERR:", err);
+    return res.status(500).json({ message: "Failed to create appointment" });
   }
-  return res.status(400).json({ message: "Invalid role for dashboard" });
 });
 
-// ---------------- Core actions ----------------
-
-// Book appointment (patient)
-app.post("/appointments", authenticateToken, authorizeRoles("patient"), (req, res) => {
-  const { doctorPhone, date } = req.body;
-  if (!doctorPhone || !date) return res.status(400).json({ message: "doctorPhone and date required" });
-  // optionally verify doctor exists
-  const d = doctors.find(x => x.phone === doctorPhone);
-  if (!d) return res.status(400).json({ message: "Doctor not found" });
-  const appt = { id: Date.now(), patientPhone: req.user.phone, doctorPhone, date };
-  appointments.push(appt);
-  return res.json({ message: "Appointment booked", appointment: appt });
+// View appointments (patient sees own; doctor sees own)
+app.get("/appointments", authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role === "patient") {
+      const rows = await q(
+        `SELECT a.*, u.username AS doctor_phone, d.name AS doctor_name
+         FROM appointments a
+         JOIN users u ON u.id = a.doctor_user_id
+         LEFT JOIN doctors d ON d.user_id = a.doctor_user_id
+         WHERE a.patient_user_id = ?
+         ORDER BY a.scheduled_at DESC`,
+        [req.user.id]
+      );
+      return res.json(rows);
+    }
+    if (req.user.role === "doctor") {
+      const rows = await q(
+        `SELECT a.*, u.username AS patient_phone, p.name AS patient_name
+         FROM appointments a
+         JOIN users u ON u.id = a.patient_user_id
+         LEFT JOIN patients p ON p.user_id = a.patient_user_id
+         WHERE a.doctor_user_id = ?
+         ORDER BY a.scheduled_at DESC`,
+        [req.user.id]
+      );
+      return res.json(rows);
+    }
+    return res.status(403).json({ message: "Not allowed" });
+  } catch (err) {
+    console.error("GET APPTS ERR:", err);
+    return res.status(500).json({ message: "Failed to fetch appointments" });
+  }
 });
 
-// Doctor writes prescription
-app.post("/prescriptions", authenticateToken, authorizeRoles("doctor"), (req, res) => {
-  const { patientPhone, medicine, notes } = req.body;
-  if (!patientPhone || !medicine) return res.status(400).json({ message: "patientPhone and medicine required" });
-  // optionally verify patient exists
-  const p = patients.find(x => x.phone === patientPhone);
-  if (!p) return res.status(400).json({ message: "Patient not found" });
-  const presc = { id: Date.now(), doctorPhone: req.user.phone, patientPhone, medicine, notes: notes || "", date: new Date().toISOString() };
-  prescriptions.push(presc);
-  return res.json({ message: "Prescription added", prescription: presc });
+// optional: patient-specific endpoint
+app.get("/appointments/me", authenticateToken, authorizeRoles("patient"), async (req, res) => {
+  try {
+    const rows = await q(
+      `SELECT a.*, u.username AS doctor_phone, d.name AS doctor_name
+       FROM appointments a
+       JOIN users u ON u.id = a.doctor_user_id
+       LEFT JOIN doctors d ON d.user_id = a.doctor_user_id
+       WHERE a.patient_user_id = ?
+       ORDER BY a.scheduled_at DESC`,
+      [req.user.id]
+    );
+    return res.json(rows);
+  } catch (err) {
+    console.error("GET APPTS ME ERR:", err);
+    return res.status(500).json({ message: "Failed to fetch appointments" });
+  }
 });
 
-// Doctor recommends followup
-app.post("/followups", authenticateToken, authorizeRoles("doctor"), (req, res) => {
-  const { patientPhone, message, date } = req.body;
-  if (!patientPhone || !message) return res.status(400).json({ message: "patientPhone and message required" });
-  const p = patients.find(x => x.phone === patientPhone);
-  if (!p) return res.status(400).json({ message: "Patient not found" });
-  const f = { id: Date.now(), doctorPhone: req.user.phone, patientPhone, message, date };
-  followups.push(f);
-  return res.json({ message: "Followup scheduled", followup: f });
+// ----------------- Prescriptions -----------------
+// Doctor creates prescription
+app.post("/prescriptions", authenticateToken, authorizeRoles("doctor"), async (req, res) => {
+  try {
+    const { patientId, patientUsername, medicine } = req.body;
+    if (!medicine || (!patientId && !patientUsername)) return res.status(400).json({ message: "patientId/patientUsername and medicine required" });
+
+    let pid = patientId;
+    if (!pid && patientUsername) {
+      const p = await q("SELECT id FROM users WHERE username = ? AND role = 'patient'", [patientUsername]);
+      if (p.length === 0) return res.status(404).json({ message: "Patient not found" });
+      pid = p[0].id;
+    }
+
+    const r = await exec("INSERT INTO prescriptions (patient_user_id, doctor_user_id, medicine) VALUES (?, ?, ?)", [pid, req.user.id, medicine]);
+    return res.status(201).json({ message: "Prescription created", id: r.insertId });
+  } catch (err) {
+    console.error("CREATE RX ERR:", err);
+    return res.status(500).json({ message: "Failed to create prescription" });
+  }
 });
 
-// Contact Us (patient) - capture patient name + phone automatically
-app.post("/contact", authenticateToken, authorizeRoles("patient"), (req, res) => {
-  const { subject, message } = req.body;
-  if (!subject || !message) return res.status(400).json({ message: "subject and message required" });
-  const patient = patients.find(p => p.phone === req.user.phone);
-  if (!patient) return res.status(404).json({ message: "Patient profile not found" });
-  const contact = { id: Date.now(), name: patient.name, phone: patient.phone, subject, message, date: new Date().toISOString() };
-  contacts.push(contact);
-  console.log("New contact message:", contact);
-  return res.json({ message: "Your message has been received", contact });
+// View prescriptions: patient sees their prescriptions; doctor sees ones they authored
+app.get("/prescriptions", authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role === "patient") {
+      const rows = await q(
+        `SELECT p.*, d.name AS doctor_name
+         FROM prescriptions p
+         LEFT JOIN doctors d ON d.user_id = p.doctor_user_id
+         WHERE p.patient_user_id = ?
+         ORDER BY p.created_at DESC`,
+        [req.user.id]
+      );
+      return res.json(rows);
+    }
+    if (req.user.role === "doctor") {
+      const rows = await q(
+        `SELECT p.*, pt.name AS patient_name
+         FROM prescriptions p
+         LEFT JOIN patients pt ON pt.user_id = p.patient_user_id
+         WHERE p.doctor_user_id = ?
+         ORDER BY p.created_at DESC`,
+        [req.user.id]
+      );
+      return res.json(rows);
+    }
+    return res.status(403).json({ message: "Not allowed" });
+  } catch (err) {
+    console.error("GET RX ERR:", err);
+    return res.status(500).json({ message: "Failed to fetch prescriptions" });
+  }
 });
 
-// ---------------- Admin (protected) ----------------
-// Create an admin entry manually in-memory or via register with role 'admin' (not exposed publicly)
-app.get("/admin/users", authenticateToken, authorizeRoles("admin"), (req, res) => {
-  res.json({ users, patients, doctors });
+// ----------------- Uploads (multer) -----------------
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, UPLOADS_DIR),
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname.replace(/\s+/g, "_")}`)
 });
-app.get("/admin/contacts", authenticateToken, authorizeRoles("admin"), (req, res) => {
-  res.json(contacts);
-});
-app.get("/admin/dashboard", authenticateToken, authorizeRoles("admin"), (req, res) => {
-  const stats = {
-    totalUsers: users.length,
-    totalPatients: patients.length,
-    totalDoctors: doctors.length,
-    totalAppointments: appointments.length,
-    totalPrescriptions: prescriptions.length,
-    totalContacts: contacts.length
-  };
-  res.json({ stats });
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/") || file.mimetype === "application/pdf") cb(null, true);
+    else cb(new Error("Only images and PDFs allowed"), false);
+  },
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
 });
 
-// ---------------- Utility: create an admin helper (for local testing) ----------------
-// You can run POST /create-admin (development only) to quickly create an admin user (not recommended for prod)
-app.post("/create-admin", (req, res) => {
+app.post("/uploads", authenticateToken, upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: "file required" });
+    const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    await exec("INSERT INTO uploads (user_id, original_name, server_filename, url) VALUES (?, ?, ?, ?)", [req.user.id, req.file.originalname, req.file.filename, url]);
+    return res.json({ message: "File uploaded", url });
+  } catch (err) {
+    console.error("UPLOAD ERR:", err);
+    return res.status(500).json({ message: "File upload failed", error: err.message });
+  }
+});
+app.use("/uploads", express.static(UPLOADS_DIR));
+
+// ----------------- Consultations -----------------
+// Start consultation - doctor or patient can call; need both ids or infer caller
+app.post("/consultations/start", authenticateToken, async (req, res) => {
+  try {
+    const { doctorUserId, patientUserId } = req.body;
+    let doc = doctorUserId || null;
+    let pat = patientUserId || null;
+
+    if (req.user.role === "doctor") doc = req.user.id;
+    if (req.user.role === "patient") pat = req.user.id;
+
+    if (!doc || !pat) return res.status(400).json({ message: "doctorUserId and patientUserId required (or caller must be doctor/patient)" });
+
+    const r = await exec("INSERT INTO consultations (doctor_user_id, patient_user_id, status, start_time) VALUES (?, ?, 'ongoing', NOW())", [doc, pat]);
+    return res.json({ message: "Consultation started", id: r.insertId });
+  } catch (err) {
+    console.error("CONS START ERR:", err);
+    return res.status(500).json({ message: "Failed to start consultation" });
+  }
+});
+
+// End consultation
+app.post("/consultations/end/:id", authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const r = await exec("UPDATE consultations SET status='ended', end_time = NOW() WHERE id = ?", [id]);
+    if (r.affectedRows === 0) return res.status(404).json({ message: "Consultation not found" });
+    const rows = await q("SELECT * FROM consultations WHERE id = ?", [id]);
+    return res.json({ message: "Consultation ended", session: rows[0] });
+  } catch (err) {
+    console.error("CONS END ERR:", err);
+    return res.status(500).json({ message: "Failed to end consultation" });
+  }
+});
+
+// List consultations for user
+app.get("/consultations", authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role === "doctor") {
+      const rows = await q("SELECT * FROM consultations WHERE doctor_user_id = ? ORDER BY start_time DESC", [req.user.id]);
+      return res.json(rows);
+    }
+    if (req.user.role === "patient") {
+      const rows = await q("SELECT * FROM consultations WHERE patient_user_id = ? ORDER BY start_time DESC", [req.user.id]);
+      return res.json(rows);
+    }
+    return res.status(403).json({ message: "Not allowed" });
+  } catch (err) {
+    console.error("GET CONSULTS ERR:", err);
+    return res.status(500).json({ message: "Failed to fetch consultations" });
+  }
+});
+
+// ----------------- Reminders -----------------
+// Create reminder
+app.post("/reminders", authenticateToken, async (req, res) => {
+  try {
+    const { message, due_at } = req.body;
+    if (!message || !due_at) return res.status(400).json({ message: "message and due_at required" });
+    const r = await exec("INSERT INTO reminders (user_id, message, due_at) VALUES (?, ?, ?)", [req.user.id, message, due_at]);
+    return res.status(201).json({ message: "Reminder created", id: r.insertId });
+  } catch (err) {
+    console.error("CREATE REM ERR:", err);
+    return res.status(500).json({ message: "Failed to create reminder" });
+  }
+});
+
+// Get my reminders
+app.get("/reminders", authenticateToken, async (req, res) => {
+  try {
+    const rows = await q("SELECT id, message, due_at, sent, created_at FROM reminders WHERE user_id = ? ORDER BY due_at DESC", [req.user.id]);
+    return res.json(rows);
+  } catch (err) {
+    console.error("GET REM ERR:", err);
+    return res.status(500).json({ message: "Failed to fetch reminders" });
+  }
+});
+
+// Cron to process due reminders (every minute)
+cron.schedule("* * * * *", async () => {
+  try {
+    const due = await q("SELECT id, user_id, message FROM reminders WHERE sent = 0 AND due_at <= NOW()");
+    for (const r of due) {
+      console.log(`Reminder -> user_id: ${r.user_id} message: ${r.message}`);
+      await exec("UPDATE reminders SET sent = 1 WHERE id = ?", [r.id]);
+    }
+  } catch (err) {
+    console.error("REMINDER CRON ERR:", err.message);
+  }
+});
+
+// ----------------- Integrations -----------------
+// Symptom checker (dummy)
+app.post("/symptoms", authenticateToken, (req, res) => {
+  const { symptoms } = req.body;
+  if (!Array.isArray(symptoms) || symptoms.length === 0) return res.status(400).json({ message: "Provide an array of symptoms" });
+  const possible = ["Common Cold", "Influenza", "Allergic Rhinitis"];
+  return res.json({ symptoms, possibleConditions: possible.slice(0, 3), note: "Demo response, not medical advice." });
+});
+
+
+// OTP send demo (protected)
+app.post("/otp/send", authenticateToken, (req, res) => {
   const { phone } = req.body;
-  if (!phone) return res.status(400).json({ message: "phone required" });
-  if (isRegistered(phone)) return res.status(400).json({ message: "Phone already registered" });
-  users.push({ phone, role: "admin" });
-  return res.json({ message: "Admin user created. Use /auth/send-otp -> verify to login." });
+  console.log(`📩 OTP sent to ${phone}`);
+  return res.json({ message: `OTP sent to ${phone}` });
 });
 
-// ---------------- Start server ----------------
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// ----------------- Admin dashboard -----------------
+app.get("/admin/dashboard", authenticateToken, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const u = (await q("SELECT COUNT(*) AS c FROM users"))[0];
+    const p = (await q("SELECT COUNT(*) AS c FROM patients"))[0];
+    const d = (await q("SELECT COUNT(*) AS c FROM doctors"))[0];
+    const a = (await q("SELECT COUNT(*) AS c FROM appointments"))[0];
+    const rx = (await q("SELECT COUNT(*) AS c FROM prescriptions"))[0];
+    const cns = (await q("SELECT COUNT(*) AS c FROM consultations"))[0];
+
+    return res.json({
+      message: `Welcome Admin ${req.user.username || ""}`,
+      stats: {
+        totalUsers: u.c,
+        totalPatients: p.c,
+        totalDoctors: d.c,
+        totalAppointments: a.c,
+        totalPrescriptions: rx.c,
+        totalConsultations: cns.c,
+      },
+    });
+  } catch (err) {
+    console.error("ADMIN DASH ERR:", err);
+    return res.status(500).json({ message: "Failed to fetch dashboard" });
+  }
+});
+
+// ----------------- Root & Start -----------------
+app.get("/", (req, res) => res.send("Telemedicine Backend Prototype Running"));
+
+app.listen(PORT, () => {
+  console.log(` Server running at http://localhost:${PORT}`);
+});
