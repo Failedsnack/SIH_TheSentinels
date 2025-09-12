@@ -1,0 +1,261 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hello",
+        "Hi",
+        "Namaste",
+        "नमस्ते",
+        "Namaskar",
+        "नमस्कार",
+        "Sat sri akal",
+        "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ"
+      ],
+      "responses": [
+        "Hello! How can I help?",
+        "नमस्ते! क्या समस्या है?",
+        "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਦੱਸੋ ਕੀ ਤਕਲੀਫ਼ ਹੈ?"
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thanks",
+        "Thank you",
+        "धन्यवाद",
+        "Shukriya",
+        "ਸ਼ੁਕਰੀਆ"
+      ],
+      "responses": [
+        "You are welcome!",
+        "आपका स्वागत है!",
+        "ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ!"
+      ]
+    },
+    {
+      "tag": "fever",
+      "patterns": [
+        "I have fever",
+        "Fever",
+        "Bukhar",
+        "बुखार",
+        "Mujhe bukhar hai",
+        "ਮੈਨੂੰ ਬੁਖਾਰ ਹੈ"
+      ],
+      "responses": [
+        "You may have fever. Drink water, take rest.",
+        "आपको बुखार है। पानी पिएं, आराम करें।",
+        "ਤੁਹਾਨੂੰ ਬੁਖਾਰ ਹੈ। ਪਾਣੀ ਪੀਓ, ਆਰਾਮ ਕਰੋ."
+      ],
+      "Precaution": [
+        "Drink warm fluids",
+        "Take paracetamol if needed",
+        "See doctor if fever > 2 days"
+      ]
+    },
+    {
+      "tag": "cough",
+      "patterns": [
+        "I have cough",
+        "Cough",
+        "Khansi",
+        "खांसी",
+        "Mujhe khansi ho rahi hai",
+        "ਮੈਨੂੰ ਖੰਘ ਹੈ"
+      ],
+      "responses": [
+        "You may have cough. Drink warm water.",
+        "आपको खांसी है। गरम पानी पिएं।",
+        "ਤੁਹਾਨੂੰ ਖੰਘ ਹੈ। ਗੁੰਮ ਪਾਣੀ ਪੀਓ."
+      ],
+      "Precaution": [
+        "Avoid cold food/drinks",
+        "Drink warm fluids",
+        "See doctor if cough > 5 days"
+      ]
+    },
+    {
+      "tag": "cold",
+      "patterns": [
+        "I have cold",
+        "Cold",
+        "Sardi",
+        "सर्दी",
+        "Mujhe sardi hai",
+        "ਮੈਨੂੰ ਜ਼ੁਕਾਮ ਹੈ"
+      ],
+      "responses": [
+        "You may have cold. Keep warm and rest.",
+        "आपको सर्दी है। गरम रहें और आराम करें।",
+        "ਤੁਹਾਨੂੰ ਜ਼ੁਕਾਮ ਹੈ। ਗਰਮ ਰਹੋ ਤੇ ਆਰਾਮ ਕਰੋ."
+      ],
+      "Precaution": [
+        "Drink ginger tea",
+        "Cover with blanket",
+        "Visit doctor if severe"
+      ]
+    },
+    {
+      "tag": "headache",
+      "patterns": [
+        "Headache",
+        "Sir dard",
+        "सिर दर्द",
+        "Mujhe sir dard ho raha hai",
+        "ਮੇਰਾ ਸਿਰ ਦਰਦ ਕਰ ਰਿਹਾ ਹੈ"
+      ],
+      "responses": [
+        "You may have headache. Rest and stay hydrated.",
+        "आपको सिर दर्द है। आराम करें और पानी पिएं।",
+        "ਤੁਹਾਨੂੰ ਸਿਰ ਦਰਦ ਹੈ। ਆਰਾਮ ਕਰੋ ਤੇ ਪਾਣੀ ਪੀਓ."
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Avoid loud noise"
+      ]
+    },
+    {
+      "tag": "stomach_pain",
+      "patterns": [
+        "Stomach pain",
+        "Pet dard",
+        "पेट दर्द",
+        "Mujhe pet dard hai",
+        "ਮੇਰੇ ਪੇਟ ਵਿਚ ਦਰਦ ਹੈ"
+      ],
+      "responses": [
+        "You may have stomach pain. Avoid spicy food.",
+        "आपको पेट दर्द है। मसालेदार खाना न खाएं।",
+        "ਤੁਹਾਨੂੰ ਪੇਟ ਦਰਦ ਹੈ। ਮਸਾਲੇਦਾਰ ਖਾਣਾ ਨਾ ਖਾਓ."
+      ],
+      "Precaution": [
+        "Eat light food",
+        "Drink warm water",
+        "See doctor if severe"
+      ]
+    },
+    {
+      "tag": "vomiting",
+      "patterns": [
+        "Vomiting",
+        "Ulti",
+        "उल्टी",
+        "Mujhe ulti ho rahi hai",
+        "ਮੈਨੂੰ ਉਲਟੀ ਆ ਰਹੀ ਹੈ"
+      ],
+      "responses": [
+        "You may have vomiting. Drink ORS and rest.",
+        "आपको उल्टी हो रही है। ORS पिएं और आराम करें।",
+        "ਤੁਹਾਨੂੰ ਉਲਟੀ ਆ ਰਹੀ ਹੈ। ORS ਪੀਓ ਤੇ ਆਰਾਮ ਕਰੋ."
+      ],
+      "Precaution": [
+        "Drink ORS or lemon water",
+        "Avoid oily food",
+        "See doctor if frequent"
+      ]
+    },
+    {
+      "tag": "diarrhea",
+      "patterns": [
+        "Loose motion",
+        "Diarrhea",
+        "Dast",
+        "दस्त",
+        "Mujhe dast ho rahe hai",
+        "ਮੈਨੂੰ ਦਸਤ ਹੋ ਰਹੇ ਹਨ"
+      ],
+      "responses": [
+        "You may have diarrhea. Drink ORS.",
+        "आपको दस्त हैं। ORS पिएं।",
+        "ਤੁਹਾਨੂੰ ਦਸਤ ਹਨ। ORS ਪੀਓ."
+      ],
+      "Precaution": [
+        "Drink ORS",
+        "Eat light food",
+        "Go to doctor if severe"
+      ]
+    },
+    {
+      "tag": "chest_pain",
+      "patterns": [
+        "Chest pain",
+        "Seene mein dard",
+        "सीने में दर्द",
+        "Mujhe chest pain ho raha hai",
+        "ਮੇਰੇ ਸੀਨੇ ਵਿਚ ਦਰਦ ਹੈ"
+      ],
+      "responses": [
+        "Chest pain can be serious. Please see a doctor quickly.",
+        "सीने का दर्द गंभीर हो सकता है। तुरंत डॉक्टर से मिलें।",
+        "ਸੀਨੇ ਦਾ ਦਰਦ ਗੰਭੀਰ ਹੋ ਸਕਦਾ ਹੈ। ਤੁਰੰਤ ਡਾਕਟਰ ਕੋਲ ਜਾਓ."
+      ],
+      "Precaution": [
+        "Rest immediately",
+        "Avoid exertion",
+        "Visit doctor quickly"
+      ]
+    },
+    {
+      "tag": "shortness_of_breath",
+      "patterns": [
+        "Breath problem",
+        "Saas lene mein dikkat",
+        "सांस लेने में तकलीफ",
+        "Mujhe saans lene mein dikkat hai",
+        "ਮੈਨੂੰ ਸਾਹ ਲੈਣ ਵਿੱਚ ਤਕਲੀਫ਼ ਹੈ"
+      ],
+      "responses": [
+        "Breathing problem can be serious. Go to doctor immediately.",
+        "सांस की समस्या गंभीर हो सकती है। तुरंत डॉक्टर को दिखाएं।",
+        "ਸਾਹ ਦੀ ਸਮੱਸਿਆ ਗੰਭੀਰ ਹੋ ਸਕਦੀ ਹੈ। ਫੌਰੀ ਡਾਕਟਰ ਕੋਲ ਜਾਓ."
+      ],
+      "Precaution": [
+        "Sit upright",
+        "Avoid physical strain",
+        "Go to hospital immediately"
+      ]
+    },
+    {
+      "tag": "back_pain",
+      "patterns": [
+        "Back pain",
+        "Kamar dard",
+        "कमर दर्द",
+        "Mujhe kamar dard hai",
+        "ਮੇਰੇ ਪਿੱਠ ਵਿਚ ਦਰਦ ਹੈ"
+      ],
+      "responses": [
+        "You may have back pain. Rest and apply warm compress.",
+        "आपको कमर दर्द है। आराम करें और गर्म सेंक लगाएं।",
+        "ਤੁਹਾਨੂੰ ਪਿੱਠ ਦਰਦ ਹੈ। ਆਰਾਮ ਕਰੋ ਤੇ ਗਰਮ ਪੈਕ ਲਗਾਓ."
+      ],
+      "Precaution": [
+        "Avoid heavy lifting",
+        "Stretch gently",
+        "See doctor if persistent"
+      ]
+    },
+    {
+      "tag": "dizziness",
+      "patterns": [
+        "Dizziness",
+        "Chakkar",
+        "चक्कर",
+        "Mujhe chakkar aa rahe hain",
+        "ਮੈਨੂੰ ਚੱਕਰ ਆ ਰਹੇ ਹਨ"
+      ],
+      "responses": [
+        "You may feel dizzy. Sit and rest.",
+        "आपको चक्कर आ रहे हैं। बैठ जाएँ और आराम करें।",
+        "ਤੁਹਾਨੂੰ ਚੱਕਰ ਆ ਰਹੇ ਹਨ। ਬੈਠੋ ਤੇ ਆਰਾਮ ਕਰੋ."
+      ],
+      "Precaution": [
+        "Drink water",
+        "Avoid sudden movements",
+        "See doctor if frequent"
+      ]
+    }
+  ]
+}
