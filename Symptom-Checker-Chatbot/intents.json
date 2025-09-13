@@ -1,260 +1,1686 @@
 {
   "intents": [
     {
-      "tag": "greeting",
-      "patterns": [
-        "Hello",
-        "Hi",
-        "Namaste",
-        "नमस्ते",
-        "Namaskar",
-        "नमस्कार",
-        "Sat sri akal",
-        "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ"
-      ],
-      "responses": [
-        "Hello! How can I help?",
-        "नमस्ते! क्या समस्या है?",
-        "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਦੱਸੋ ਕੀ ਤਕਲੀਫ਼ ਹੈ?"
-      ]
-    },
-    {
-      "tag": "thanks",
-      "patterns": [
-        "Thanks",
-        "Thank you",
-        "धन्यवाद",
-        "Shukriya",
-        "ਸ਼ੁਕਰੀਆ"
-      ],
-      "responses": [
-        "You are welcome!",
-        "आपका स्वागत है!",
-        "ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ!"
-      ]
-    },
-    {
       "tag": "fever",
       "patterns": [
         "I have fever",
-        "Fever",
-        "Bukhar",
-        "बुखार",
-        "Mujhe bukhar hai",
-        "ਮੈਨੂੰ ਬੁਖਾਰ ਹੈ"
+        "fever"
       ],
       "responses": [
-        "You may have fever. Drink water, take rest.",
-        "आपको बुखार है। पानी पिएं, आराम करें।",
-        "ਤੁਹਾਨੂੰ ਬੁਖਾਰ ਹੈ। ਪਾਣੀ ਪੀਓ, ਆਰਾਮ ਕਰੋ."
+        "You may have fever. Please take care.",
+        "आपको fever है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ fever ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
-        "Drink warm fluids",
-        "Take paracetamol if needed",
-        "See doctor if fever > 2 days"
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
       ]
     },
     {
       "tag": "cough",
       "patterns": [
         "I have cough",
-        "Cough",
-        "Khansi",
-        "खांसी",
-        "Mujhe khansi ho rahi hai",
-        "ਮੈਨੂੰ ਖੰਘ ਹੈ"
+        "cough"
       ],
       "responses": [
-        "You may have cough. Drink warm water.",
-        "आपको खांसी है। गरम पानी पिएं।",
-        "ਤੁਹਾਨੂੰ ਖੰਘ ਹੈ। ਗੁੰਮ ਪਾਣੀ ਪੀਓ."
+        "You may have cough. Please take care.",
+        "आपको cough है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ cough ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
-        "Avoid cold food/drinks",
-        "Drink warm fluids",
-        "See doctor if cough > 5 days"
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
       ]
     },
     {
       "tag": "cold",
       "patterns": [
         "I have cold",
-        "Cold",
-        "Sardi",
-        "सर्दी",
-        "Mujhe sardi hai",
-        "ਮੈਨੂੰ ਜ਼ੁਕਾਮ ਹੈ"
+        "cold"
       ],
       "responses": [
-        "You may have cold. Keep warm and rest.",
-        "आपको सर्दी है। गरम रहें और आराम करें।",
-        "ਤੁਹਾਨੂੰ ਜ਼ੁਕਾਮ ਹੈ। ਗਰਮ ਰਹੋ ਤੇ ਆਰਾਮ ਕਰੋ."
+        "You may have cold. Please take care.",
+        "आपको cold है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ cold ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
-        "Drink ginger tea",
-        "Cover with blanket",
-        "Visit doctor if severe"
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
       ]
     },
     {
       "tag": "headache",
       "patterns": [
-        "Headache",
-        "Sir dard",
-        "सिर दर्द",
-        "Mujhe sir dard ho raha hai",
-        "ਮੇਰਾ ਸਿਰ ਦਰਦ ਕਰ ਰਿਹਾ ਹੈ"
+        "I have headache",
+        "headache"
       ],
       "responses": [
-        "You may have headache. Rest and stay hydrated.",
-        "आपको सिर दर्द है। आराम करें और पानी पिएं।",
-        "ਤੁਹਾਨੂੰ ਸਿਰ ਦਰਦ ਹੈ। ਆਰਾਮ ਕਰੋ ਤੇ ਪਾਣੀ ਪੀਓ."
+        "You may have headache. Please take care.",
+        "आपको headache है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ headache ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
         "Drink water",
         "Take rest",
-        "Avoid loud noise"
+        "Consult doctor if severe"
       ]
     },
     {
       "tag": "stomach_pain",
       "patterns": [
-        "Stomach pain",
-        "Pet dard",
-        "पेट दर्द",
-        "Mujhe pet dard hai",
-        "ਮੇਰੇ ਪੇਟ ਵਿਚ ਦਰਦ ਹੈ"
+        "I have stomach_pain",
+        "stomach pain"
       ],
       "responses": [
-        "You may have stomach pain. Avoid spicy food.",
-        "आपको पेट दर्द है। मसालेदार खाना न खाएं।",
-        "ਤੁਹਾਨੂੰ ਪੇਟ ਦਰਦ ਹੈ। ਮਸਾਲੇਦਾਰ ਖਾਣਾ ਨਾ ਖਾਓ."
+        "You may have stomach_pain. Please take care.",
+        "आपको stomach_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ stomach_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
-        "Eat light food",
-        "Drink warm water",
-        "See doctor if severe"
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
       ]
     },
     {
       "tag": "vomiting",
       "patterns": [
-        "Vomiting",
-        "Ulti",
-        "उल्टी",
-        "Mujhe ulti ho rahi hai",
-        "ਮੈਨੂੰ ਉਲਟੀ ਆ ਰਹੀ ਹੈ"
+        "I have vomiting",
+        "vomiting"
       ],
       "responses": [
-        "You may have vomiting. Drink ORS and rest.",
-        "आपको उल्टी हो रही है। ORS पिएं और आराम करें।",
-        "ਤੁਹਾਨੂੰ ਉਲਟੀ ਆ ਰਹੀ ਹੈ। ORS ਪੀਓ ਤੇ ਆਰਾਮ ਕਰੋ."
+        "You may have vomiting. Please take care.",
+        "आपको vomiting है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ vomiting ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
-        "Drink ORS or lemon water",
-        "Avoid oily food",
-        "See doctor if frequent"
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
       ]
     },
     {
       "tag": "diarrhea",
       "patterns": [
-        "Loose motion",
-        "Diarrhea",
-        "Dast",
-        "दस्त",
-        "Mujhe dast ho rahe hai",
-        "ਮੈਨੂੰ ਦਸਤ ਹੋ ਰਹੇ ਹਨ"
+        "I have diarrhea",
+        "diarrhea"
       ],
       "responses": [
-        "You may have diarrhea. Drink ORS.",
-        "आपको दस्त हैं। ORS पिएं।",
-        "ਤੁਹਾਨੂੰ ਦਸਤ ਹਨ। ORS ਪੀਓ."
+        "You may have diarrhea. Please take care.",
+        "आपको diarrhea है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ diarrhea ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
-        "Drink ORS",
-        "Eat light food",
-        "Go to doctor if severe"
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
       ]
     },
     {
       "tag": "chest_pain",
       "patterns": [
-        "Chest pain",
-        "Seene mein dard",
-        "सीने में दर्द",
-        "Mujhe chest pain ho raha hai",
-        "ਮੇਰੇ ਸੀਨੇ ਵਿਚ ਦਰਦ ਹੈ"
+        "I have chest_pain",
+        "chest pain"
       ],
       "responses": [
-        "Chest pain can be serious. Please see a doctor quickly.",
-        "सीने का दर्द गंभीर हो सकता है। तुरंत डॉक्टर से मिलें।",
-        "ਸੀਨੇ ਦਾ ਦਰਦ ਗੰਭੀਰ ਹੋ ਸਕਦਾ ਹੈ। ਤੁਰੰਤ ਡਾਕਟਰ ਕੋਲ ਜਾਓ."
+        "You may have chest_pain. Please take care.",
+        "आपको chest_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ chest_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
-        "Rest immediately",
-        "Avoid exertion",
-        "Visit doctor quickly"
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
       ]
     },
     {
       "tag": "shortness_of_breath",
       "patterns": [
-        "Breath problem",
-        "Saas lene mein dikkat",
-        "सांस लेने में तकलीफ",
-        "Mujhe saans lene mein dikkat hai",
-        "ਮੈਨੂੰ ਸਾਹ ਲੈਣ ਵਿੱਚ ਤਕਲੀਫ਼ ਹੈ"
+        "I have shortness_of_breath",
+        "shortness of breath"
       ],
       "responses": [
-        "Breathing problem can be serious. Go to doctor immediately.",
-        "सांस की समस्या गंभीर हो सकती है। तुरंत डॉक्टर को दिखाएं।",
-        "ਸਾਹ ਦੀ ਸਮੱਸਿਆ ਗੰਭੀਰ ਹੋ ਸਕਦੀ ਹੈ। ਫੌਰੀ ਡਾਕਟਰ ਕੋਲ ਜਾਓ."
+        "You may have shortness_of_breath. Please take care.",
+        "आपको shortness_of_breath है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ shortness_of_breath ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
-        "Sit upright",
-        "Avoid physical strain",
-        "Go to hospital immediately"
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
       ]
     },
     {
       "tag": "back_pain",
       "patterns": [
-        "Back pain",
-        "Kamar dard",
-        "कमर दर्द",
-        "Mujhe kamar dard hai",
-        "ਮੇਰੇ ਪਿੱਠ ਵਿਚ ਦਰਦ ਹੈ"
+        "I have back_pain",
+        "back pain"
       ],
       "responses": [
-        "You may have back pain. Rest and apply warm compress.",
-        "आपको कमर दर्द है। आराम करें और गर्म सेंक लगाएं।",
-        "ਤੁਹਾਨੂੰ ਪਿੱਠ ਦਰਦ ਹੈ। ਆਰਾਮ ਕਰੋ ਤੇ ਗਰਮ ਪੈਕ ਲਗਾਓ."
+        "You may have back_pain. Please take care.",
+        "आपको back_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ back_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
-        "Avoid heavy lifting",
-        "Stretch gently",
-        "See doctor if persistent"
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
       ]
     },
     {
       "tag": "dizziness",
       "patterns": [
-        "Dizziness",
-        "Chakkar",
-        "चक्कर",
-        "Mujhe chakkar aa rahe hain",
-        "ਮੈਨੂੰ ਚੱਕਰ ਆ ਰਹੇ ਹਨ"
+        "I have dizziness",
+        "dizziness"
       ],
       "responses": [
-        "You may feel dizzy. Sit and rest.",
-        "आपको चक्कर आ रहे हैं। बैठ जाएँ और आराम करें।",
-        "ਤੁਹਾਨੂੰ ਚੱਕਰ ਆ ਰਹੇ ਹਨ। ਬੈਠੋ ਤੇ ਆਰਾਮ ਕਰੋ."
+        "You may have dizziness. Please take care.",
+        "आपको dizziness है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ dizziness ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
       ],
       "Precaution": [
         "Drink water",
-        "Avoid sudden movements",
-        "See doctor if frequent"
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "toothache",
+      "patterns": [
+        "I have toothache",
+        "toothache"
+      ],
+      "responses": [
+        "You may have toothache. Please take care.",
+        "आपको toothache है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ toothache ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "ear_pain",
+      "patterns": [
+        "I have ear_pain",
+        "ear pain"
+      ],
+      "responses": [
+        "You may have ear_pain. Please take care.",
+        "आपको ear_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ ear_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "eye_pain",
+      "patterns": [
+        "I have eye_pain",
+        "eye pain"
+      ],
+      "responses": [
+        "You may have eye_pain. Please take care.",
+        "आपको eye_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ eye_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "skin_rash",
+      "patterns": [
+        "I have skin_rash",
+        "skin rash"
+      ],
+      "responses": [
+        "You may have skin_rash. Please take care.",
+        "आपको skin_rash है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ skin_rash ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "sore_throat",
+      "patterns": [
+        "I have sore_throat",
+        "sore throat"
+      ],
+      "responses": [
+        "You may have sore_throat. Please take care.",
+        "आपको sore_throat है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ sore_throat ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "runny_nose",
+      "patterns": [
+        "I have runny_nose",
+        "runny nose"
+      ],
+      "responses": [
+        "You may have runny_nose. Please take care.",
+        "आपको runny_nose है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ runny_nose ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "constipation",
+      "patterns": [
+        "I have constipation",
+        "constipation"
+      ],
+      "responses": [
+        "You may have constipation. Please take care.",
+        "आपको constipation है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ constipation ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "acidity",
+      "patterns": [
+        "I have acidity",
+        "acidity"
+      ],
+      "responses": [
+        "You may have acidity. Please take care.",
+        "आपको acidity है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ acidity ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "gas",
+      "patterns": [
+        "I have gas",
+        "gas"
+      ],
+      "responses": [
+        "You may have gas. Please take care.",
+        "आपको gas है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ gas ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "fatigue",
+      "patterns": [
+        "I have fatigue",
+        "fatigue"
+      ],
+      "responses": [
+        "You may have fatigue. Please take care.",
+        "आपको fatigue है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ fatigue ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "weakness",
+      "patterns": [
+        "I have weakness",
+        "weakness"
+      ],
+      "responses": [
+        "You may have weakness. Please take care.",
+        "आपको weakness है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ weakness ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "joint_pain",
+      "patterns": [
+        "I have joint_pain",
+        "joint pain"
+      ],
+      "responses": [
+        "You may have joint_pain. Please take care.",
+        "आपको joint_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ joint_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "muscle_pain",
+      "patterns": [
+        "I have muscle_pain",
+        "muscle pain"
+      ],
+      "responses": [
+        "You may have muscle_pain. Please take care.",
+        "आपको muscle_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ muscle_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "leg_pain",
+      "patterns": [
+        "I have leg_pain",
+        "leg pain"
+      ],
+      "responses": [
+        "You may have leg_pain. Please take care.",
+        "आपको leg_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ leg_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "arm_pain",
+      "patterns": [
+        "I have arm_pain",
+        "arm pain"
+      ],
+      "responses": [
+        "You may have arm_pain. Please take care.",
+        "आपको arm_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ arm_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "shoulder_pain",
+      "patterns": [
+        "I have shoulder_pain",
+        "shoulder pain"
+      ],
+      "responses": [
+        "You may have shoulder_pain. Please take care.",
+        "आपको shoulder_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ shoulder_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "neck_pain",
+      "patterns": [
+        "I have neck_pain",
+        "neck pain"
+      ],
+      "responses": [
+        "You may have neck_pain. Please take care.",
+        "आपको neck_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ neck_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "allergy",
+      "patterns": [
+        "I have allergy",
+        "allergy"
+      ],
+      "responses": [
+        "You may have allergy. Please take care.",
+        "आपको allergy है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ allergy ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "itching",
+      "patterns": [
+        "I have itching",
+        "itching"
+      ],
+      "responses": [
+        "You may have itching. Please take care.",
+        "आपको itching है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ itching ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "burning_sensation",
+      "patterns": [
+        "I have burning_sensation",
+        "burning sensation"
+      ],
+      "responses": [
+        "You may have burning_sensation. Please take care.",
+        "आपको burning_sensation है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ burning_sensation ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "swelling",
+      "patterns": [
+        "I have swelling",
+        "swelling"
+      ],
+      "responses": [
+        "You may have swelling. Please take care.",
+        "आपको swelling है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ swelling ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "hand_pain",
+      "patterns": [
+        "I have hand_pain",
+        "hand pain"
+      ],
+      "responses": [
+        "You may have hand_pain. Please take care.",
+        "आपको hand_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ hand_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "foot_pain",
+      "patterns": [
+        "I have foot_pain",
+        "foot pain"
+      ],
+      "responses": [
+        "You may have foot_pain. Please take care.",
+        "आपको foot_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ foot_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "hair_fall",
+      "patterns": [
+        "I have hair_fall",
+        "hair fall"
+      ],
+      "responses": [
+        "You may have hair_fall. Please take care.",
+        "आपको hair_fall है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ hair_fall ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "bleeding_gums",
+      "patterns": [
+        "I have bleeding_gums",
+        "bleeding gums"
+      ],
+      "responses": [
+        "You may have bleeding_gums. Please take care.",
+        "आपको bleeding_gums है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ bleeding_gums ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "mouth_ulcer",
+      "patterns": [
+        "I have mouth_ulcer",
+        "mouth ulcer"
+      ],
+      "responses": [
+        "You may have mouth_ulcer. Please take care.",
+        "आपको mouth_ulcer है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ mouth_ulcer ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "throat_pain",
+      "patterns": [
+        "I have throat_pain",
+        "throat pain"
+      ],
+      "responses": [
+        "You may have throat_pain. Please take care.",
+        "आपको throat_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ throat_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "nose_bleed",
+      "patterns": [
+        "I have nose_bleed",
+        "nose bleed"
+      ],
+      "responses": [
+        "You may have nose_bleed. Please take care.",
+        "आपको nose_bleed है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ nose_bleed ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "eye_redness",
+      "patterns": [
+        "I have eye_redness",
+        "eye redness"
+      ],
+      "responses": [
+        "You may have eye_redness. Please take care.",
+        "आपको eye_redness है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ eye_redness ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "watery_eyes",
+      "patterns": [
+        "I have watery_eyes",
+        "watery eyes"
+      ],
+      "responses": [
+        "You may have watery_eyes. Please take care.",
+        "आपको watery_eyes है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ watery_eyes ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "ear_discharge",
+      "patterns": [
+        "I have ear_discharge",
+        "ear discharge"
+      ],
+      "responses": [
+        "You may have ear_discharge. Please take care.",
+        "आपको ear_discharge है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ ear_discharge ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "hearing_loss",
+      "patterns": [
+        "I have hearing_loss",
+        "hearing loss"
+      ],
+      "responses": [
+        "You may have hearing_loss. Please take care.",
+        "आपको hearing_loss है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ hearing_loss ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "vision_blur",
+      "patterns": [
+        "I have vision_blur",
+        "vision blur"
+      ],
+      "responses": [
+        "You may have vision_blur. Please take care.",
+        "आपको vision_blur है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ vision_blur ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "weight_loss",
+      "patterns": [
+        "I have weight_loss",
+        "weight loss"
+      ],
+      "responses": [
+        "You may have weight_loss. Please take care.",
+        "आपको weight_loss है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ weight_loss ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "weight_gain",
+      "patterns": [
+        "I have weight_gain",
+        "weight gain"
+      ],
+      "responses": [
+        "You may have weight_gain. Please take care.",
+        "आपको weight_gain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ weight_gain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "loss_of_appetite",
+      "patterns": [
+        "I have loss_of_appetite",
+        "loss of appetite"
+      ],
+      "responses": [
+        "You may have loss_of_appetite. Please take care.",
+        "आपको loss_of_appetite है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ loss_of_appetite ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "excessive_hunger",
+      "patterns": [
+        "I have excessive_hunger",
+        "excessive hunger"
+      ],
+      "responses": [
+        "You may have excessive_hunger. Please take care.",
+        "आपको excessive_hunger है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ excessive_hunger ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "night_sweats",
+      "patterns": [
+        "I have night_sweats",
+        "night sweats"
+      ],
+      "responses": [
+        "You may have night_sweats. Please take care.",
+        "आपको night_sweats है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ night_sweats ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "chills",
+      "patterns": [
+        "I have chills",
+        "chills"
+      ],
+      "responses": [
+        "You may have chills. Please take care.",
+        "आपको chills है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ chills ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "palpitations",
+      "patterns": [
+        "I have palpitations",
+        "palpitations"
+      ],
+      "responses": [
+        "You may have palpitations. Please take care.",
+        "आपको palpitations है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ palpitations ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "fast_heartbeat",
+      "patterns": [
+        "I have fast_heartbeat",
+        "fast heartbeat"
+      ],
+      "responses": [
+        "You may have fast_heartbeat. Please take care.",
+        "आपको fast_heartbeat है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ fast_heartbeat ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "slow_heartbeat",
+      "patterns": [
+        "I have slow_heartbeat",
+        "slow heartbeat"
+      ],
+      "responses": [
+        "You may have slow_heartbeat. Please take care.",
+        "आपको slow_heartbeat है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ slow_heartbeat ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "low_blood_pressure",
+      "patterns": [
+        "I have low_blood_pressure",
+        "low blood pressure"
+      ],
+      "responses": [
+        "You may have low_blood_pressure. Please take care.",
+        "आपको low_blood_pressure है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ low_blood_pressure ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "high_blood_pressure",
+      "patterns": [
+        "I have high_blood_pressure",
+        "high blood pressure"
+      ],
+      "responses": [
+        "You may have high_blood_pressure. Please take care.",
+        "आपको high_blood_pressure है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ high_blood_pressure ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "dehydration",
+      "patterns": [
+        "I have dehydration",
+        "dehydration"
+      ],
+      "responses": [
+        "You may have dehydration. Please take care.",
+        "आपको dehydration है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ dehydration ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "swollen_feet",
+      "patterns": [
+        "I have swollen_feet",
+        "swollen feet"
+      ],
+      "responses": [
+        "You may have swollen_feet. Please take care.",
+        "आपको swollen_feet है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ swollen_feet ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "hand_numbness",
+      "patterns": [
+        "I have hand_numbness",
+        "hand numbness"
+      ],
+      "responses": [
+        "You may have hand_numbness. Please take care.",
+        "आपको hand_numbness है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ hand_numbness ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "tingling_sensation",
+      "patterns": [
+        "I have tingling_sensation",
+        "tingling sensation"
+      ],
+      "responses": [
+        "You may have tingling_sensation. Please take care.",
+        "आपको tingling_sensation है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ tingling_sensation ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "tremors",
+      "patterns": [
+        "I have tremors",
+        "tremors"
+      ],
+      "responses": [
+        "You may have tremors. Please take care.",
+        "आपको tremors है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ tremors ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "seizures",
+      "patterns": [
+        "I have seizures",
+        "seizures"
+      ],
+      "responses": [
+        "You may have seizures. Please take care.",
+        "आपको seizures है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ seizures ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "memory_loss",
+      "patterns": [
+        "I have memory_loss",
+        "memory loss"
+      ],
+      "responses": [
+        "You may have memory_loss. Please take care.",
+        "आपको memory_loss है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ memory_loss ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "confusion",
+      "patterns": [
+        "I have confusion",
+        "confusion"
+      ],
+      "responses": [
+        "You may have confusion. Please take care.",
+        "आपको confusion है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ confusion ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "anxiety",
+      "patterns": [
+        "I have anxiety",
+        "anxiety"
+      ],
+      "responses": [
+        "You may have anxiety. Please take care.",
+        "आपको anxiety है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ anxiety ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "depression",
+      "patterns": [
+        "I have depression",
+        "depression"
+      ],
+      "responses": [
+        "You may have depression. Please take care.",
+        "आपको depression है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ depression ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "insomnia",
+      "patterns": [
+        "I have insomnia",
+        "insomnia"
+      ],
+      "responses": [
+        "You may have insomnia. Please take care.",
+        "आपको insomnia है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ insomnia ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "sleepiness",
+      "patterns": [
+        "I have sleepiness",
+        "sleepiness"
+      ],
+      "responses": [
+        "You may have sleepiness. Please take care.",
+        "आपको sleepiness है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ sleepiness ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "restlessness",
+      "patterns": [
+        "I have restlessness",
+        "restlessness"
+      ],
+      "responses": [
+        "You may have restlessness. Please take care.",
+        "आपको restlessness है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ restlessness ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "anger",
+      "patterns": [
+        "I have anger",
+        "anger"
+      ],
+      "responses": [
+        "You may have anger. Please take care.",
+        "आपको anger है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ anger ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "stress",
+      "patterns": [
+        "I have stress",
+        "stress"
+      ],
+      "responses": [
+        "You may have stress. Please take care.",
+        "आपको stress है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ stress ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "fear",
+      "patterns": [
+        "I have fear",
+        "fear"
+      ],
+      "responses": [
+        "You may have fear. Please take care.",
+        "आपको fear है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ fear ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "panic_attack",
+      "patterns": [
+        "I have panic_attack",
+        "panic attack"
+      ],
+      "responses": [
+        "You may have panic_attack. Please take care.",
+        "आपको panic_attack है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ panic_attack ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "urine_pain",
+      "patterns": [
+        "I have urine_pain",
+        "urine pain"
+      ],
+      "responses": [
+        "You may have urine_pain. Please take care.",
+        "आपको urine_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ urine_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "frequent_urine",
+      "patterns": [
+        "I have frequent_urine",
+        "frequent urine"
+      ],
+      "responses": [
+        "You may have frequent_urine. Please take care.",
+        "आपको frequent_urine है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ frequent_urine ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "blood_in_urine",
+      "patterns": [
+        "I have blood_in_urine",
+        "blood in urine"
+      ],
+      "responses": [
+        "You may have blood_in_urine. Please take care.",
+        "आपको blood_in_urine है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ blood_in_urine ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "dark_urine",
+      "patterns": [
+        "I have dark_urine",
+        "dark urine"
+      ],
+      "responses": [
+        "You may have dark_urine. Please take care.",
+        "आपको dark_urine है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ dark_urine ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "kidney_pain",
+      "patterns": [
+        "I have kidney_pain",
+        "kidney pain"
+      ],
+      "responses": [
+        "You may have kidney_pain. Please take care.",
+        "आपको kidney_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ kidney_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "liver_pain",
+      "patterns": [
+        "I have liver_pain",
+        "liver pain"
+      ],
+      "responses": [
+        "You may have liver_pain. Please take care.",
+        "आपको liver_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ liver_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "jaundice",
+      "patterns": [
+        "I have jaundice",
+        "jaundice"
+      ],
+      "responses": [
+        "You may have jaundice. Please take care.",
+        "आपको jaundice है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ jaundice ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "diabetes_symptoms",
+      "patterns": [
+        "I have diabetes_symptoms",
+        "diabetes symptoms"
+      ],
+      "responses": [
+        "You may have diabetes_symptoms. Please take care.",
+        "आपको diabetes_symptoms है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ diabetes_symptoms ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "thyroid_symptoms",
+      "patterns": [
+        "I have thyroid_symptoms",
+        "thyroid symptoms"
+      ],
+      "responses": [
+        "You may have thyroid_symptoms. Please take care.",
+        "आपको thyroid_symptoms है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ thyroid_symptoms ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "menstrual_pain",
+      "patterns": [
+        "I have menstrual_pain",
+        "menstrual pain"
+      ],
+      "responses": [
+        "You may have menstrual_pain. Please take care.",
+        "आपको menstrual_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ menstrual_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "irregular_periods",
+      "patterns": [
+        "I have irregular_periods",
+        "irregular periods"
+      ],
+      "responses": [
+        "You may have irregular_periods. Please take care.",
+        "आपको irregular_periods है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ irregular_periods ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "pregnancy_symptoms",
+      "patterns": [
+        "I have pregnancy_symptoms",
+        "pregnancy symptoms"
+      ],
+      "responses": [
+        "You may have pregnancy_symptoms. Please take care.",
+        "आपको pregnancy_symptoms है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ pregnancy_symptoms ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "vomiting_in_pregnancy",
+      "patterns": [
+        "I have vomiting_in_pregnancy",
+        "vomiting in pregnancy"
+      ],
+      "responses": [
+        "You may have vomiting_in_pregnancy. Please take care.",
+        "आपको vomiting_in_pregnancy है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ vomiting_in_pregnancy ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "back_pain_pregnancy",
+      "patterns": [
+        "I have back_pain_pregnancy",
+        "back pain pregnancy"
+      ],
+      "responses": [
+        "You may have back_pain_pregnancy. Please take care.",
+        "आपको back_pain_pregnancy है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ back_pain_pregnancy ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "breast_pain",
+      "patterns": [
+        "I have breast_pain",
+        "breast pain"
+      ],
+      "responses": [
+        "You may have breast_pain. Please take care.",
+        "आपको breast_pain है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ breast_pain ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "chest_heaviness",
+      "patterns": [
+        "I have chest_heaviness",
+        "chest heaviness"
+      ],
+      "responses": [
+        "You may have chest_heaviness. Please take care.",
+        "आपको chest_heaviness है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ chest_heaviness ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "asthma_attack",
+      "patterns": [
+        "I have asthma_attack",
+        "asthma attack"
+      ],
+      "responses": [
+        "You may have asthma_attack. Please take care.",
+        "आपको asthma_attack है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ asthma_attack ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "wheezing",
+      "patterns": [
+        "I have wheezing",
+        "wheezing"
+      ],
+      "responses": [
+        "You may have wheezing. Please take care.",
+        "आपको wheezing है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ wheezing ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "skin_infection",
+      "patterns": [
+        "I have skin_infection",
+        "skin infection"
+      ],
+      "responses": [
+        "You may have skin_infection. Please take care.",
+        "आपको skin_infection है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ skin_infection ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "boils",
+      "patterns": [
+        "I have boils",
+        "boils"
+      ],
+      "responses": [
+        "You may have boils. Please take care.",
+        "आपको boils है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ boils ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "acne",
+      "patterns": [
+        "I have acne",
+        "acne"
+      ],
+      "responses": [
+        "You may have acne. Please take care.",
+        "आपको acne है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ acne ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "eczema",
+      "patterns": [
+        "I have eczema",
+        "eczema"
+      ],
+      "responses": [
+        "You may have eczema. Please take care.",
+        "आपको eczema है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ eczema ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "psoriasis",
+      "patterns": [
+        "I have psoriasis",
+        "psoriasis"
+      ],
+      "responses": [
+        "You may have psoriasis. Please take care.",
+        "आपको psoriasis है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ psoriasis ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "heat_stroke",
+      "patterns": [
+        "I have heat_stroke",
+        "heat stroke"
+      ],
+      "responses": [
+        "You may have heat_stroke. Please take care.",
+        "आपको heat_stroke है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ heat_stroke ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "sunburn",
+      "patterns": [
+        "I have sunburn",
+        "sunburn"
+      ],
+      "responses": [
+        "You may have sunburn. Please take care.",
+        "आपको sunburn है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ sunburn ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "frostbite",
+      "patterns": [
+        "I have frostbite",
+        "frostbite"
+      ],
+      "responses": [
+        "You may have frostbite. Please take care.",
+        "आपको frostbite है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ frostbite ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
+      ]
+    },
+    {
+      "tag": "snake_bite",
+      "patterns": [
+        "I have snake_bite",
+        "snake bite"
+      ],
+      "responses": [
+        "You may have snake_bite. Please take care.",
+        "आपको snake_bite है। ध्यान रखें।",
+        "ਤੁਹਾਨੂੰ snake_bite ਹੈ। ਧਿਆਨ ਰੱਖੋ।"
+      ],
+      "Precaution": [
+        "Drink water",
+        "Take rest",
+        "Consult doctor if severe"
       ]
     }
   ]
