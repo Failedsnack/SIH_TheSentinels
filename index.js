@@ -11,6 +11,7 @@ import multer from "multer";
 import cron from "node-cron";
 import axios from "axios";
 import pool from "./database.js";
+import translations from "./translations.json" assert {type:"json"};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +24,18 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_key";
 const PORT = process.env.PORT || 3000;
 const UPLOADS_DIR = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+
+//----------------Translation Middleware---------
+function detectLang(req, res, next){
+  req.lang = req.headers["accept-language"]?.split(",")[0] || "en";
+  next();
+}
+app.use(detectLang);
+
+function t(lang,key){
+  const l = ["en","hi","pa"].includes(lang) ? lang:"en";
+  return translations[l][key] || translations["en"][key] || key;
+}
 
 // ----------------- DB helpers -----------------
 
@@ -39,10 +52,10 @@ async function exec(sql, params = []) {
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "No token provided" });
+  if (!token) return res.status(401).json({ message: t(req.lang, "no_token") });
 
   jwt.verify(token, JWT_SECRET, (err, payload) => {
-    if (err) return res.status(403).json({ message: "Invalid or expired token" });
+    if (err) return res.status(403).json({ message: t(req.lang, "invalid_token") });
     req.user = payload; // { id, username, role, iat, exp }
     next();
   });
@@ -50,14 +63,13 @@ function authenticateToken(req, res, next) {
 function authorizeRoles(...allowed) {
   return (req, res, next) => {
     if (!req.user || !allowed.includes(req.user.role)) {
-      return res.status(403).json({ message: "Access denied: insufficient role" });
+      return res.status(403).json({ message: t(req.lang, "access_denied") });
     }
     next();
   };
 }
 
 // ================== OTP Auth ==================
-import crypto from "crypto";
 const otpStore = new Map();
 const OTP_TTL_SEC = 300; // 5 minutes
 
@@ -68,13 +80,13 @@ function generateOTP() {
 // 1. Request OTP
 app.post("/auth/send-otp", async (req, res) => {
   const { phone } = req.body;
-  if (!phone) return res.status(500).json({ message: "Phone is required" });
+  if (!phone) return res.status(500).json({ message: t(req.lang, "phone_required") });
 
   // check if user exists
   const [users] = await pool.query("SELECT * FROM users WHERE username = ?", [phone]);
 
   if (users.length === 0) {
-    return res.json({ registered: false, message: "Phone not registered. Please register." });
+    return res.json({ registered: false, message: t(req.lang, "phone_not_registered") });
   }
 
   const otp = generateOTP();
@@ -82,27 +94,27 @@ app.post("/auth/send-otp", async (req, res) => {
 
   console.log(`DEBUG OTP for ${phone}: ${otp}`); // in real app: send SMS
 
-  res.json({ registered: true, message: "OTP sent" });
+  res.json({ registered: true, message: t(req.lang, "otp_sent") });
 });
 
 // 2. Verify OTP
 app.post("/auth/verify-otp", async (req, res) => {
   const { phone, otp } = req.body;
-  if (!phone || !otp) return res.status(500).json({ message: "Phone and OTP required" });
+  if (!phone || !otp) return res.status(500).json({ message: t(req.lang, "phone_otp_required") });
 
   const entry = otpStore.get(phone);
   if (!entry || Date.now() > entry.expiresAt) {
-    return res.status(400).json({ message: "OTP expired or not found" });
+    return res.status(400).json({ message: t(req.lang, "otp_expired") });
   }
   if (entry.otp !== otp) {
-    return res.status(400).json({ message: "Invalid OTP" });
+    return res.status(400).json({ message: t(req.lang, "invalid_otp") });
   }
 
   otpStore.delete(phone);
 
   // fetch user
   const [[user]] = await pool.query("SELECT * FROM users WHERE username = ?", [phone]);
-  if (!user) return res.status(400).json({ message: "User not found. Please register first." });
+  if (!user) return res.status(400).json({ message: t(req.lang, "user_not_found") });
 
   // create JWT
   const token = jwt.sign(
@@ -111,19 +123,19 @@ app.post("/auth/verify-otp", async (req, res) => {
     { expiresIn: "7d" }
   );
 
-  res.json({ message: "Login successful", token, role: user.role });
+  res.json({ message: t(req.lang, "login_success"), token, role: user.role });
 });
 
 // 3. Register (if phone not registered)
 app.post("/register", async (req, res) => {
   const { role, phone, name, age, specialization } = req.body;
 
-  if (!phone || !role) return res.status(400).json({ message: "phone and role required" });
+  if (!phone || !role) return res.status(400).json({ message: t(req.lang, "phone_role_required") });
   if (!["patient", "doctor"].includes(role))
-    return res.status(400).json({ message: "role must be patient or doctor" });
+    return res.status(400).json({ message: t(req.lang, "invalid_role") });
 
   const [exists] = await pool.query("SELECT id FROM users WHERE username=?", [phone]);
-  if (exists.length > 0) return res.status(400).json({ message: "Phone already registered" });
+  if (exists.length > 0) return res.status(400).json({ message: t(req.lang, "already_registered") });
 
   const [r] = await pool.query("INSERT INTO users (username, role) VALUES (?, ?)", [phone, role]);
   const userId = r.insertId;
@@ -140,7 +152,7 @@ app.post("/register", async (req, res) => {
     );
   }
 
-  res.status(201).json({ message: "Registered successfully. Please request OTP to login." });
+  res.status(201).json({ message: t(req.lang, "registered_success") });
 });
 
 // ----------------- Profiles -----------------
@@ -150,7 +162,7 @@ app.get("/profile", authenticateToken, async (req, res) => {
     return res.json(rows[0] || null);
   } catch (err) {
     console.error("PROFILE ERR:", err);
-    return res.status(500).json({ message: "Profile fetch error" });
+    return res.status(500).json({ message: t(req.lang, "profile_error") });
   }
 });
 
@@ -169,7 +181,7 @@ app.get("/doctors", async (req, res) => {
     return res.json(rows);
   } catch (err) {
     console.error("GET DOCTORS ERR:", err);
-    return res.status(500).json({ message: "Error fetching doctors" });
+    return res.status(500).json({ message: t(req.lang, "doctors_error") });
   }
 });
 
@@ -183,7 +195,7 @@ app.get("/doctors/me", authenticateToken, authorizeRoles("doctor"), async (req, 
     return res.json(rows[0] || null);
   } catch (err) {
     console.error("DOCTOR ME ERR:", err);
-    return res.status(500).json({ message: "Failed to fetch doctor profile" });
+    return res.status(500).json({ message: t(req.lang, "doctors_error") });
   }
 });
 
@@ -193,7 +205,7 @@ app.get("/patients/me", authenticateToken, authorizeRoles("patient"), async (req
     return res.json(rows[0] || null);
   } catch (err) {
     console.error("PATIENT ME ERR:", err);
-    return res.status(500).json({ message: "Failed to fetch patient profile" });
+    return res.status(500).json({ message: t(req.lang, "patients_error") });
   }
 });
 
@@ -203,20 +215,20 @@ app.post("/appointments", authenticateToken, authorizeRoles("patient"), async (r
   try {
     const { doctorId, doctorUsername, scheduled_at } = req.body;
     if (!scheduled_at || (!doctorId && !doctorUsername)) {
-      return res.status(400).json({ message: "scheduled_at and doctorId or doctorUsername required" });
+      return res.status(400).json({ message: t(req.lang, "appointment_required") });
     }
 
     // resolve doctor id if username provided
     let docId = doctorId;
     if (!docId && doctorUsername) {
       const rows = await q("SELECT id FROM users WHERE username = ? AND role = 'doctor'", [doctorUsername]);
-      if (rows.length === 0) return res.status(404).json({ message: "Doctor not found" });
+      if (rows.length === 0) return res.status(404).json({ message: t(req.lang, "doctors_error") });
       docId = rows[0].id;
     }
 
     // verify doctor exists
     const drCheck = await q("SELECT id FROM users WHERE id = ? AND role = 'doctor'", [docId]);
-    if (drCheck.length === 0) return res.status(404).json({ message: "Doctor not found" });
+    if (drCheck.length === 0) return res.status(404).json({ message: t(req.lang, "doctors_error") });
 
     // conflict check
     const conflict = await q("SELECT id FROM appointments WHERE doctor_user_id = ? AND scheduled_at = ?", [docId, scheduled_at]);
@@ -231,10 +243,10 @@ app.post("/appointments", authenticateToken, authorizeRoles("patient"), async (r
       scheduled_at,
     ]);
 
-    return res.status(201).json({ message: "Appointment booked", id: result.insertId });
+    return res.status(201).json({ message: t(req.lang, "appointment_booked"), id: result.insertId });
   } catch (err) {
     console.error("CREATE APPT ERR:", err);
-    return res.status(500).json({ message: "Failed to create appointment" });
+    return res.status(500).json({ message: t(req.lang, "appointment_error") });
   }
 });
 
@@ -296,7 +308,7 @@ app.get("/appointments/me", authenticateToken, authorizeRoles("patient"), async 
 app.post("/prescriptions", authenticateToken, authorizeRoles("doctor"), async (req, res) => {
   try {
     const { patientId, patientUsername, medicine } = req.body;
-    if (!medicine || (!patientId && !patientUsername)) return res.status(400).json({ message: "patientId/patientUsername and medicine required" });
+    if (!medicine || (!patientId && !patientUsername)) return res.status(400).json({ message: t(req.lang, "prescription_required") });
 
     let pid = patientId;
     if (!pid && patientUsername) {
@@ -306,10 +318,10 @@ app.post("/prescriptions", authenticateToken, authorizeRoles("doctor"), async (r
     }
 
     const r = await exec("INSERT INTO prescriptions (patient_user_id, doctor_user_id, medicine) VALUES (?, ?, ?)", [pid, req.user.id, medicine]);
-    return res.status(201).json({ message: "Prescription created", id: r.insertId });
+    return res.status(201).json({ message: t(req.lang, "prescription_added"), id: r.insertId });
   } catch (err) {
     console.error("CREATE RX ERR:", err);
-    return res.status(500).json({ message: "Failed to create prescription" });
+    return res.status(500).json({ message: t(req.lang, "prescription_error") });
   }
 });
 
@@ -361,10 +373,10 @@ const upload = multer({
 
 app.post("/uploads", authenticateToken, upload.single("file"), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ message: "file required" });
+    if (!req.file) return res.status(400).json({ message: t(req.lang, "file_required") });
     const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
     await exec("INSERT INTO uploads (user_id, original_name, server_filename, url) VALUES (?, ?, ?, ?)", [req.user.id, req.file.originalname, req.file.filename, url]);
-    return res.json({ message: "File uploaded", url });
+    return res.json({ message: t(req.lang, "file_uploaded"), url });
   } catch (err) {
     console.error("UPLOAD ERR:", err);
     return res.status(500).json({ message: "File upload failed", error: err.message });
@@ -502,7 +514,7 @@ app.get("/admin/dashboard", authenticateToken, authorizeRoles("admin"), async (r
       },
     });
   } catch (err) {
-    console.error("ADMIN DASH ERR:", err);
+    console.error("ADMIN DASH ERR:", err);        
     return res.status(500).json({ message: "Failed to fetch dashboard" });
   }
 });
