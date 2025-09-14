@@ -1,7 +1,0 @@
-geocoder
-flask
-numpy
-pandas
-flask_cors
-torch
-nltk
